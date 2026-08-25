@@ -8,6 +8,11 @@ const weatherList = ref([
 ])
 
 const city = ref('')
+const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
+
+function selectCity(name) {
+  statusMessage.value = `${name}이 선택되었습니다.`
+}
 
 </script>
 
@@ -27,7 +32,7 @@ const city = ref('')
       <h2><span class="icon">🏙️</span> 지역별 날씨 현황</h2>
       
       <ul class="city-list">
-        <li v-for="weather in weatherList" :key="weather.id" class="city-card">
+        <li v-for="weather in weatherList" :key="weather.id" class="city-card" @click="selectCity(weather.name)">
           <div class="city-card-header">
             <p class="city-name">{{ weather.name }}</p>
             <span class="city-status">{{ weather.status }}</span>
@@ -66,6 +71,9 @@ const city = ref('')
       </ul>
     </section>
 
+    <section class="panel">
+      <p class="status-banner">{{ statusMessage }}</p>
+    </section>
   </div>
 </template>
 
@@ -82,15 +90,15 @@ const city = ref('')
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: #1e3a5f;
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #e8edf3;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
 }
 
 h2 {
@@ -102,7 +110,7 @@ h2 {
   color: #0f172a;
   margin: 0 0 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid #dbe2ea;
 }
 
 .icon {
@@ -112,23 +120,23 @@ h2 {
 .search-input {
   width: 100%;
   padding: 0.7rem 0.9rem;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #cbd5e1;
   border-radius: 10px;
   font-size: 0.95rem;
   box-sizing: border-box;
-  background: #f8fafc;
+  background: #ffffff;
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
 .search-input::placeholder {
-  color: #a3aebc;
+  color: #94a3b8;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #0ea5e9;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
 }
 
 .search-status {
@@ -150,17 +158,18 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  background: #fff;
-  border: 1px solid #e8edf3;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 14px;
   padding: 1.25rem;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .city-card:hover {
-  border-color: #c7d2fe;
-  box-shadow: 0 12px 24px -12px rgba(79, 70, 229, 0.2);
+  border-color: #7dd3fc;
+  box-shadow: 0 12px 24px -12px rgba(14, 165, 233, 0.3);
   transform: translateY(-3px);
 }
 
@@ -179,8 +188,8 @@ h2 {
 .city-status {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #475569;
-  background: #f1f5f9;
+  color: #334155;
+  background: #f8fafc;
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
 }
@@ -189,7 +198,7 @@ h2 {
   font-size: 2.1rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #0f172a, #4338ca);
+  background: linear-gradient(135deg, #0f172a, #0284c7);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -226,7 +235,7 @@ h2 {
   gap: 0.45rem;
   margin: 0.3rem 0 0;
   padding-top: 0.7rem;
-  border-top: 1px dashed #e8edf3;
+  border-top: 1px dashed #cbd5e1;
   font-size: 0.85rem;
   color: #475569;
 }
@@ -253,8 +262,8 @@ h2 {
   padding: 0.6rem 0.8rem;
   border: none;
   border-radius: 10px;
-  background: #eef1ff;
-  color: #4338ca;
+  background: #f2f3f5;
+  color: #0369a1;
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
@@ -262,7 +271,7 @@ h2 {
 }
 
 .detail-btn:hover {
-  background: #e0e4ff;
+  background: #bae6fd;
 }
 
 .detail-btn:active {
