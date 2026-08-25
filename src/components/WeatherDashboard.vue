@@ -8,6 +8,7 @@ const weatherList = ref([
 ])
 
 const city = ref('')
+
 </script>
 
 <template>
@@ -21,5 +22,31 @@ const city = ref('')
         검색 중인 도시: {{ city }}
       </p>
     </section>
+
+    <section class="panel">
+      <h2><span class="icon">🏙️</span> 지역별 날씨 현황</h2>
+      
+      <ul class="city-list">
+        <li v-for="weather in weatherList" :key="weather.id" class="city-item">
+          <div class="city-main"> 
+            <p class="city-name"> {{ weather.name }} ({{ weather.status }})</p>
+            <p class="city-temp">현재 기온: {{ weather.temp }}°C</p>
+
+            <span class="badge" v-if="weather.temp >= 25">🔥 더움 (25도 이상)</span>
+            <span class="badge" v-else-if="weather.temp <= 10">❄️ 추움 (10도 이하)</span>
+            <span class="badge" v-else>🌤️ 적정 (10도 ~ 25도)</span>
+
+            <p>바람: {{ weather.wind }}</p>
+            <p>체감 온도: {{ weather.feelsLike }}°C</p>
+            <p>기분: {{ weather.mood }}</p>
+          </div>
+
+          <button type="button" class="detail-btn" @click.stop="toggleCity(weather.id)">
+            상세보기
+          </button>
+        </li>
+      </ul>
+    </section>
+
   </div>
 </template>
