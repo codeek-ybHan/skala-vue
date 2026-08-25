@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, watchEffect } from 'vue'
 
 const weatherList = ref([
   { id: 'city_01', name: '서울', temp: 28, status: '맑음', mood: '산책하기 좋은 날', wind: '3m/s', feelsLike: 30 },
@@ -7,15 +7,26 @@ const weatherList = ref([
   { id: 'city_03', name: '부산', temp: 26, status: '구름', mood: '느긋하게 보내기 좋은 날', wind: '4m/s', feelsLike: 27 },
 ])
 
-const city = ref('')
+const searchQuery = ref('')
 const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
+const selectedCityInfo = ref('')
 const showDetail = (cityName, status) => {
   window.alert(`${cityName}의 현재 날씨는 ${status}입니다.`)
 }
 
 function selectCityInfo(name) {
-  statusMessage.value = `${name}이 선택되었습니다.`
+  selectedCityInfo.value = name
 }
+
+watch(selectedCityInfo, (newName) => {
+  if (!newName) return
+  statusMessage.value = `${newName}이 선택되었습니다.`
+  console.log('[watch 감지] 상태바 문구가 업데이트 되었습니다 -> ', statusMessage.value)
+})
+
+watchEffect(() => {
+  console.log('[watchEffect 자동 호출] 현재 검색어: ', searchQuery.value)
+})
 
 const hoveredCityId = ref(null)
 
@@ -27,7 +38,7 @@ function hideTooltip() {
 }
 
 const filteredWeatherList = computed(() =>
-  weatherList.value.filter((weather) => weather.name.includes(city.value.trim()))
+  weatherList.value.filter((weather) => weather.name.includes(searchQuery.value.trim()))
 )
 </script>
 
@@ -37,9 +48,9 @@ const filteredWeatherList = computed(() =>
 
     <section class="panel">
       <h2><span class="icon">🔍</span> 도시 검색</h2>
-      <input type="text" :value="city" @input="(e) => (city = e.target.value)" class="search-input" placeholder="검색할 도시 이름 입력"/>
+      <input type="text" :value="searchQuery" @input="(e) => (searchQuery = e.target.value)" class="search-input" placeholder="검색할 도시 이름 입력"/>
       <p class="search-status">
-        검색 중인 도시: {{ city }}  
+        검색 중인 도시: {{ searchQuery }}
       </p>
     </section>
 
@@ -86,7 +97,7 @@ const filteredWeatherList = computed(() =>
           </button>
         </li>
       </ul>
-      <p v-else class="empty-message">'{{ city }}'와 일치하는 도시가 없습니다.</p>
+      <p v-else class="empty-message">'{{ searchQuery }}'와 일치하는 도시가 없습니다.</p>
     </section>
 
     <section class="panel">
