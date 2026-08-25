@@ -9,11 +9,22 @@ const weatherList = ref([
 
 const city = ref('')
 const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
+const showDetail = (cityName, status) => {
+  window.alert(`${cityName}의 현재 날씨는 ${status}입니다.`)
+}
 
 function selectCity(name) {
   statusMessage.value = `${name}이 선택되었습니다.`
 }
 
+const hoveredCityId = ref(null)
+
+function showTooltip(id) {
+  hoveredCityId.value = id
+}
+function hideTooltip() {
+  hoveredCityId.value = null
+}
 </script>
 
 <template>
@@ -32,14 +43,20 @@ function selectCity(name) {
       <h2><span class="icon">🏙️</span> 지역별 날씨 현황</h2>
       
       <ul class="city-list">
-        <li v-for="weather in weatherList" :key="weather.id" class="city-card" @click="selectCity(weather.name)">
+        <li v-for="weather in weatherList" :key="weather.id" class="city-card" @click="selectCity(weather.name)"
+          @mouseenter="showTooltip(weather.id)"
+          @mouseleave="hideTooltip"
+        >
+          <div v-if="hoveredCityId === weather.id" class="tooltip-bubble">
+            {{ weather.mood }}
+          </div>
+
           <div class="city-card-header">
             <p class="city-name">{{ weather.name }}</p>
             <span class="city-status">{{ weather.status }}</span>
           </div>
 
           <p class="city-temp">{{ weather.temp }}°C</p>
-
           <span
             class="badge"
             :class="weather.temp >= 25 ? 'badge-hot' : weather.temp <= 10 ? 'badge-cold' : 'badge-normal'"
@@ -58,13 +75,9 @@ function selectCity(name) {
               <dt>체감 온도</dt>
               <dd>{{ weather.feelsLike }}°C</dd>
             </div>
-            <div class="city-meta-row">
-              <dt>기분</dt>
-              <dd>{{ weather.mood }}</dd>
-            </div>
           </dl>
 
-          <button type="button" class="detail-btn" @click.stop="toggleCity(weather.id)">
+          <button type="button" class="detail-btn" @click.stop="showDetail(weather.name, weather.status)">
             상세보기
           </button>
         </li>
@@ -155,6 +168,7 @@ h2 {
 }
 
 .city-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -171,6 +185,33 @@ h2 {
   border-color: #7dd3fc;
   box-shadow: 0 12px 24px -12px rgba(14, 165, 233, 0.3);
   transform: translateY(-3px);
+}
+
+.tooltip-bubble {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #fff;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.35);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.tooltip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #0f172a;
 }
 
 .city-card-header {
