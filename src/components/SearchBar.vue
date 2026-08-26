@@ -10,13 +10,7 @@ defineEmits(['update-query'])
 </script>
 
 <template>
-  <input
-    type="text"
-    :value="searchQuery"
-    @input="$emit('update-query', $event.target.value)"
-    class="search-input"
-    placeholder="검색할 도시 이름 입력"
-  />
+  <input type="text" :value="searchQuery" @input="$emit('update-query', $event.target.value)" class="search-input" placeholder="검색할 도시 이름 입력"/>
   <p class="search-status">검색 중인 도시: {{ searchQuery }}</p>
 </template>
 

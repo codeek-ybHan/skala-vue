@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch, watchEffect } from 'vue'
-import BaseDashboardCard from './BaseDashboardCard.vue'
-import SearchBar from './SearchBar.vue'
-import WeatherCard from './WeatherCard.vue'
+import BaseDashboardCard from '../components/BaseDashboardCard.vue'
+import SearchBar from '../components/SearchBar.vue'
+import WeatherCard from '../components/WeatherCard.vue'
 
 const weatherList = ref([
   { id: 'city_01', name: '서울', temp: 28, status: '맑음', mood: '산책하기 좋은 날', wind: '3m/s', feelsLike: 30 },
@@ -13,11 +13,11 @@ const weatherList = ref([
 const searchQuery = ref('')
 const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
 const selectedCityInfo = ref('')
-const showDetail = (cityName, status) => {
+
+const handleClickDetail = (cityName, status) => {
   window.alert(`${cityName}의 현재 날씨는 ${status}입니다.`)
 }
-
-function selectCityInfo(name) {
+const handleSelectCard = (name) => {
   selectedCityInfo.value = name
 }
 
@@ -52,8 +52,8 @@ const filteredWeatherList = computed(() =>
           v-for="weather in filteredWeatherList"
           :key="weather.id"
           :weather="weather"
-          @select-card="selectCityInfo"
-          @click-detail="showDetail"
+          @select-card="handleSelectCard"
+          @click-detail="handleClickDetail"
         />
       </ul>
       <p v-else class="empty-message">'{{ searchQuery }}'와 일치하는 도시가 없습니다.</p>

@@ -7,7 +7,6 @@ const props = defineProps({
     required: true,
   },
 })
-
 const emit = defineEmits(['select-card', 'click-detail'])
 
 const isHovered = ref(false)
@@ -25,14 +24,11 @@ function handleDetailClick() {
 </script>
 
 <template>
-  <li
-    class="city-card"
-    @click="emit('select-card', weather.name)"
+  <li class="city-card" @click="emit('select-card', weather.name)"
     @mouseenter="showTooltip"
-    @mouseleave="hideTooltip"
-  >
+    @mouseleave="hideTooltip"> 
     <div v-if="isHovered" class="tooltip-bubble">
-      {{ weather.mood }}
+      {{ weather.mood }} <!-- v-on 이벤트 중 @mouseenter, @mouseleave 활용하여 마우스 카드에 올리면 mood 말풍선 표시 -->
     </div>
 
     <div class="city-card-header">
@@ -41,10 +37,7 @@ function handleDetailClick() {
     </div>
 
     <p class="city-temp">{{ weather.temp }}°C</p>
-    <span
-      class="badge"
-      :class="weather.temp >= 25 ? 'badge-hot' : weather.temp <= 10 ? 'badge-cold' : 'badge-normal'"
-    >
+    <span class="badge" :class="weather.temp >= 25 ? 'badge-hot' : weather.temp <= 10 ? 'badge-cold' : 'badge-normal'">
       <template v-if="weather.temp >= 25">🔥 더움 (25도 이상)</template>
       <template v-else-if="weather.temp <= 10">❄️ 추움 (10도 이하)</template>
       <template v-else>🌤️ 적정 (10도 ~ 25도)</template>
