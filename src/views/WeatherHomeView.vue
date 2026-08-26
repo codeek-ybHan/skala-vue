@@ -48,13 +48,9 @@ const filteredWeatherList = computed(() =>
     <BaseDashboardCard>
       <template #header><span class="icon">🏙️</span> 지역별 날씨 현황</template>
       <ul v-if="filteredWeatherList.length > 0" class="city-list">
-        <WeatherCard
-          v-for="weather in filteredWeatherList"
-          :key="weather.id"
-          :weather="weather"
-          @select-card="handleSelectCard"
-          @click-detail="handleClickDetail"
-        />
+
+        <WeatherCard v-for="weather in filteredWeatherList" :key="weather.id" :weather="weather"
+          @select-card="handleSelectCard" @click-detail="handleClickDetail"/>
       </ul>
       <p v-else class="empty-message">'{{ searchQuery }}'와 일치하는 도시가 없습니다.</p>
     </BaseDashboardCard>
