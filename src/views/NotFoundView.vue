@@ -9,7 +9,7 @@ import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 
     <BaseDashboardCard>
       <template #header><span class="icon">404</span> Page Not Found</template>
-      <p class="lead">요청하신 페이지가 존재하지 않거나 개발 중입니다.</p>
+      <p class="lead">요청하신 페이지가 존재하지 않거나 개발 중입니다!image.png.</p>
       <RouterLink to="/" class="home-link">대시보드로 돌아가기</RouterLink>
     </BaseDashboardCard>
   </div>
