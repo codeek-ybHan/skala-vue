@@ -6,7 +6,7 @@ import { fetchCityWeather } from '../api/weather'
 
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import SearchBar from '../components/SearchBar.vue'
-import WeatherCard from '../components/WeatherCard.vue'
+import KoreaMap from '../components/KoreaMap.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -78,11 +78,13 @@ watchEffect(() => {
 
     <BaseDashboardCard>
       <template #header><span class="icon">🏙️</span> 지역별 날씨 현황</template>
-      <ul v-if="filteredWeatherList.length > 0" class="city-list">
-
-        <WeatherCard v-for="weather in filteredWeatherList" :key="weather.id" :weather="weather"
-          @select-card="handleSelectCard" @click-detail="handleClickDetail"/>
-      </ul>
+      <p class="description">도시를 클릭하면 날씨 카드를 고정시킬 수 있고, 한번 더 클릭하면 내려갑니다.</p>
+      <KoreaMap
+        v-if="filteredWeatherList.length > 0"
+        :weather-list="filteredWeatherList"
+        @select-card="handleSelectCard"
+        @click-detail="handleClickDetail"
+      />
       <p v-else class="empty-message">'{{ searchQuery }}'와 일치하는 도시가 없습니다.</p>
     </BaseDashboardCard>
 
@@ -110,15 +112,6 @@ watchEffect(() => {
 
 .icon {
   font-size: 1.1rem;
-}
-
-.city-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.1rem;
 }
 
 .empty-message {
