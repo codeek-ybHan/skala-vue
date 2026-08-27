@@ -11,8 +11,8 @@ Dart 전자정보공시시스템에서 api 키를 가져와, 각 재무 지표�
 ### 동작 방식
 - `/company` 라우트(`views/CompanyWeatherView.vue`) 신규 추가, `App.vue` 네비게이션에 "기업 날씨" 탭 추가
 - `data/dartCompanies.js`에 기업명 → DART 고유 `corp_code`(8자리) 매핑을 직접 보유 — DART는 기업명이 아닌 `corp_code`로만 조회 가능하기 때문
-- 기업 선택 시 `api/dart.js`의 `fetchCompanyFinance()`가 OpenDART 단일회사 전체 재무제표 API(`fnlttSinglAcntAll.json`)를 호출 (직전 사업연도, 사업보고서 `11011`, 연결재무제표 `CFS`)
-- 계정과목 명칭은 기업마다 달라서, IFRS 표준 계정 ID(`account_id`)로 매출액 / 영업이익 / 당기순이익 / 부채총계를 매칭
+- 기업 선택 시 `api/dart.js`의 `fetchCompanyFinance()`가 OpenDART 단일회사 주요계정 API(`fnlttSinglAcnt.json`)를 호출 (직전 사업연도, 사업보고서 `11011`, 연결재무제표 `CFS`) — 전체 재무제표(`...AcntAll`, ~100KB) 대신 주요계정(~16KB)만 받아 응답을 가볍게 함
+- 응답에 `account_id`가 없어 `account_nm`(매출액 / 영업이익 / 당기순이익 / 부채총계)과 `fs_div === 'CFS'`로 매칭, 금액은 콤마 제거 후 숫자 변환
 - `components/CompanyCard.vue`에서 상태 이모지, 조/억 단위 금액 포맷, 전기 대비 증감 화살표(↑/↓)로 표시
 - DART는 CORS를 허용하지 않고 API 키도 노출하면 안 되므로, 브라우저는 항상 서버 프록시(`/api/dart`)를 경유한다
   - 개발: `vite.config.js`의 dev 서버 프록시 (`.env`의 `DART_API_KEY` 주입)
@@ -45,6 +45,26 @@ src/
 ├─ stores/      # Pinia 스토어
 └─ views/       # 라우트 단위 페이지 컴포넌트
 ```
+
+## 환경변수
+
+| 이름 | 용도 | 노출 범위 |
+|---|---|---|
+| `VITE_WEATHER_API_KEY` | OpenWeatherMap 날씨 API 키 | 브라우저 번들에 포함 (OWM은 CORS 허용이라 클라이언트에서 직접 호출) |
+| `DART_API_KEY` | OpenDART 재무 API 키 | 서버(프록시)에서만 사용 — 프런트 번들에 포함되지 않음 |
+
+## 배포 (Vercel)
+
+- 정적 빌드(`npm run build` → `dist/`)와 `api/` 서버리스 함수가 함께 배포된다.
+- **환경변수 등록**: Vercel 프로젝트 → Settings → Environment Variables 에 위 두 값을 등록하고 재배포한다.
+  - `VITE_*` 변수는 브라우저에 노출되므로 Vercel에서 Secret 타입으로 저장할 수 없다 → **Config 타입**으로 등록.
+  - `DART_API_KEY`는 `VITE_` 접두사가 없어 Secret 타입으로 저장 가능(진짜 비공개).
+- **DART 프록시**: `vercel.json`의 `rewrites`로 `opendart.fss.or.kr`에 직접 프록시하면 TLS 핸드셰이크 실패(`ROUTER_EXTERNAL_TARGET_HANDSHAKE_ERROR`, 502)가 나서, `api/dart.js` 서버리스 함수가 Node `fetch`로 대신 호출하도록 우회했다.
+- **SPA 라우팅**: `vercel.json`에서 `/api`를 제외한 모든 경로를 `/index.html`로 rewrite (`/company` 직접 접속·새로고침 시 404 방지).
+- **재무 조회 응답 속도**: 초기엔 함수가 미국 리전(`iad1`)에서 실행돼 한국 사용자 ↔ 미국 ↔ 한국 DART 왕복 + 콜드 스타트로 첫 요청이 8초까지 걸렸다. 개선:
+  - `vercel.json`의 `"regions": ["icn1"]`로 함수를 **서울 리전**에서 실행 (DART·사용자와 같은 지역)
+  - 주요계정 API로 교체해 페이로드 축소(~100KB → ~16KB)
+  - 함수 응답에 `Cache-Control: s-maxage=86400`을 붙여 같은 기업 재조회는 CDN 캐시(엣지)에서 즉시 응답 — 지난 사업연도 공시는 거의 바뀌지 않음
 
 ---
 

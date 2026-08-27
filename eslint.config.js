@@ -21,6 +21,17 @@ export default defineConfig([
     },
   },
 
+  {
+    // Node 환경에서 도는 파일들 (Vite 설정, Vercel 서버리스 함수)
+    name: 'app/node-files',
+    files: ['vite.config.js', 'api/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
 

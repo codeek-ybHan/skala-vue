@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
             const query = path.split('?')[1] ?? ''
             const params = new URLSearchParams(query)
             params.set('crtfc_key', env.DART_API_KEY ?? '')
-            return `/api/fnlttSinglAcntAll.json?${params.toString()}`
+            return `/api/fnlttSinglAcnt.json?${params.toString()}`
           },
         },
       },

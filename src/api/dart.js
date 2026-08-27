@@ -6,21 +6,20 @@ import axios from 'axios'
 // - 배포(Vercel): api/dart.js 서버리스 함수
 const BASE_URL = '/api/dart'
 
-// 계정과목 표기는 기업마다 다르지만(매출액/영업수익 등), account_id(IFRS 표준 계정 ID)는 공통이라 이걸로 매칭
-const ACCOUNT_ID = {
-  revenue: 'ifrs-full_Revenue',
-  operatingProfit: 'dart_OperatingIncomeLoss',
-  netIncome: 'ifrs-full_ProfitLoss',
-  debt: 'ifrs-full_Liabilities',
-}
+// 주요계정 API(fnlttSinglAcnt)는 account_id가 없어 account_nm으로 매칭한다.
+// 연결(CFS)/개별(OFS)이 함께 내려오므로 fs_div === 'CFS'만 사용.
+const IS_DIVS = ['IS', 'CIS']
 
-function findAccount(list, accountId, sjDivs) {
-  return list.find((item) => item.account_id === accountId && sjDivs.includes(item.sj_div))
+function findByName(list, matcher, sjDivs) {
+  return list.find(
+    (item) => item.fs_div === 'CFS' && sjDivs.includes(item.sj_div) && matcher(item.account_nm ?? ''),
+  )
 }
 
 function toNumber(value) {
   if (value === undefined || value === null || value === '') return null
-  const n = Number(value)
+  // 주요계정 API는 금액을 "227,062,266,000,000"처럼 콤마 포함 문자열로 준다
+  const n = Number(String(value).replace(/,/g, ''))
   return Number.isNaN(n) ? null : n
 }
 
@@ -56,10 +55,10 @@ export async function fetchCompanyFinance({ name, corpCode }) {
   }
 
   const list = res.data.list ?? []
-  const revenueItem = findAccount(list, ACCOUNT_ID.revenue, ['IS', 'CIS'])
-  const profitItem = findAccount(list, ACCOUNT_ID.operatingProfit, ['IS', 'CIS'])
-  const netIncomeItem = findAccount(list, ACCOUNT_ID.netIncome, ['IS', 'CIS'])
-  const debtItem = findAccount(list, ACCOUNT_ID.debt, ['BS'])
+  const revenueItem = findByName(list, (nm) => nm === '매출액' || nm === '영업수익', IS_DIVS)
+  const profitItem = findByName(list, (nm) => nm === '영업이익' || nm === '영업손실', IS_DIVS)
+  const netIncomeItem = findByName(list, (nm) => nm.startsWith('당기순이익'), IS_DIVS)
+  const debtItem = findByName(list, (nm) => nm === '부채총계', ['BS'])
 
   const revenue = toNumber(revenueItem?.thstrm_amount)
   const prevRevenue = toNumber(revenueItem?.frmtrm_amount)
