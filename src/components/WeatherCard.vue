@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useConfigStore } from '../stores/configStore'
 
 const HOT_THRESHOLD_C = 25
@@ -13,15 +13,6 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['select-card', 'click-detail'])
-
-const isHovered = ref(false)
-
-function showTooltip() {
-  isHovered.value = true
-}
-function hideTooltip() {
-  isHovered.value = false
-}
 
 function handleDetailClick() {
   emit('click-detail', props.weather.id)
@@ -39,13 +30,7 @@ const badgeType = computed(() => {
 </script>
 
 <template>
-  <li class="city-card" @click="emit('select-card', weather.name)"
-    @mouseenter="showTooltip"
-    @mouseleave="hideTooltip"> 
-    <div v-if="isHovered" class="tooltip-bubble">
-      {{ weather.mood }} <!-- v-on 이벤트 중 @mouseenter, @mouseleave 활용하여 마우스 카드에 올리면 mood 말풍선 표시 -->
-    </div>
-
+  <li class="city-card" @click="emit('select-card', weather.name)">
     <div class="city-card-header">
       <p class="city-name">{{ weather.name }}</p>
       <span class="city-status">{{ weather.status }}</span>
@@ -94,33 +79,6 @@ const badgeType = computed(() => {
   border-color: #7dd3fc;
   box-shadow: 0 12px 24px -12px rgba(14, 165, 233, 0.3);
   transform: translateY(-3px);
-}
-
-.tooltip-bubble {
-  position: absolute;
-  bottom: calc(100% + 14px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #e4e4e4;
-  color: #1a1a1a;
-  padding: 0.55rem 1rem;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-  pointer-events: none;
-  z-index: 20;
-}
-
-.tooltip-bubble::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 7px solid transparent;
-  border-top-color: #e4e4e4;
 }
 
 .city-card-header {

@@ -41,7 +41,6 @@ const displayFeelsLike = computed(() => {
 
     <BaseDashboardCard v-if="weather">
       <template #header><span class="icon">🏙️</span> {{ weather.name }}</template>
-      <p class="lead">{{ weather.mood }}</p>
       <dl class="detail-meta">
         <div class="detail-meta-row">
           <dt>날씨</dt>
