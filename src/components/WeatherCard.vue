@@ -1,6 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useConfigStore } from '../stores/configStore'
+import { convertTemp } from '../utils/temperature'
 
+const HOT_THRESHOLD_C = 25
+const COLD_THRESHOLD_C = 10
+
+const configStore = useConfigStore()
 const props = defineProps({
   weather: {
     type: Object,
@@ -21,6 +27,16 @@ function hideTooltip() {
 function handleDetailClick() {
   emit('click-detail', props.weather.id)
 }
+
+const displayTemp = computed(() => convertTemp(props.weather.temp, configStore.unit))
+const displayFeelsLike = computed(() => convertTemp(props.weather.feelsLike, configStore.unit))
+const hotThreshold = computed(() => convertTemp(HOT_THRESHOLD_C, configStore.unit))
+const coldThreshold = computed(() => convertTemp(COLD_THRESHOLD_C, configStore.unit))
+const badgeType = computed(() => {
+  if (displayTemp.value >= hotThreshold.value) return 'hot'
+  if (displayTemp.value <= coldThreshold.value) return 'cold'
+  return 'normal'
+})
 </script>
 
 <template>
@@ -36,11 +52,11 @@ function handleDetailClick() {
       <span class="city-status">{{ weather.status }}</span>
     </div>
 
-    <p class="city-temp">{{ weather.temp }}°C</p>
-    <span class="badge" :class="weather.temp >= 25 ? 'badge-hot' : weather.temp <= 10 ? 'badge-cold' : 'badge-normal'">
-      <template v-if="weather.temp >= 25">🔥 더움 (25도 이상)</template>
-      <template v-else-if="weather.temp <= 10">❄️ 추움 (10도 이하)</template>
-      <template v-else>🌤️ 적정 (10도 ~ 25도)</template>
+    <p class="city-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
+    <span class="badge" :class="`badge-${badgeType}`">
+      <template v-if="badgeType === 'hot'">🔥 더움 ({{ hotThreshold }}{{ configStore.unitSymbol }} 이상)</template>
+      <template v-else-if="badgeType === 'cold'">❄️ 추움 ({{ coldThreshold }}{{ configStore.unitSymbol }} 이하)</template>
+      <template v-else>🌤️ 적정 ({{ coldThreshold }}{{ configStore.unitSymbol }} ~ {{ hotThreshold }}{{ configStore.unitSymbol }})</template>
     </span>
 
     <dl class="city-meta">
@@ -50,7 +66,7 @@ function handleDetailClick() {
       </div>
       <div class="city-meta-row">
         <dt>체감 온도</dt>
-        <dd>{{ weather.feelsLike }}°C</dd>
+        <dd>{{ displayFeelsLike }}{{ configStore.unitSymbol }}</dd>
       </div>
     </dl>
 

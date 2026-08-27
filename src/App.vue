@@ -1,11 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import UnitToggler from './components/UnitToggler.vue'
 </script>
 
 <template>
   <nav class="tab-nav">
     <RouterLink to="/" class="tab-link">대시보드</RouterLink>
     <RouterLink to="/about" class="tab-link">서비스 소개</RouterLink>
+    <UnitToggler />
   </nav>
   <RouterView />
 </template>

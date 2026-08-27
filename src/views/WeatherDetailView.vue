@@ -1,14 +1,26 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import { weatherList } from '../data/weatherData'
+import { useConfigStore } from '../stores/configStore'
+import { convertTemp } from '../utils/temperature'
 
+const configStore = useConfigStore()
 const route = useRoute()
 const weather = ref(null)
 
 onMounted(() => {
   weather.value = weatherList.find((city) => city.id === route.params.cityId)
+})
+
+const displayTemp = computed(() => {
+  if (!weather.value) return 0
+  return convertTemp(weather.value.temp, configStore.unit)
+})
+const displayFeelsLike = computed(() => {
+  if (!weather.value) return 0
+  return convertTemp(weather.value.feelsLike, configStore.unit)
 })
 </script>
 
@@ -26,11 +38,11 @@ onMounted(() => {
         </div>
         <div class="detail-meta-row">
           <dt>기온</dt>
-          <dd>{{ weather.temp }}°C</dd>
+          <dd><strong>{{ displayTemp }}{{ configStore.unitSymbol }}</strong></dd>
         </div>
         <div class="detail-meta-row">
           <dt>체감 온도</dt>
-          <dd>{{ weather.feelsLike }}°C</dd>
+          <dd>{{ displayFeelsLike }}{{ configStore.unitSymbol }}</dd>
         </div>
         <div class="detail-meta-row">
           <dt>바람</dt>
