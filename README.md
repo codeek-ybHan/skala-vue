@@ -33,10 +33,10 @@ Dart 전자정보공시시스템에서 api 키를 가져와, 각 재무 지표�
 ## 프로젝트 구조
 ```
 src/
-├─ api/         # 외부 API 호출 (OpenWeatherMap)
+├─ api/         # 외부 API 호출 (OpenWeatherMap 날씨, OpenDART 재무)
 ├─ assets/      # 전역 스타일, 정적 자산(지도 SVG 등)
 ├─ components/  # 재사용 UI 컴포넌트
-├─ data/        # 정적 참조 데이터 (도시 목록)
+├─ data/        # 정적 참조 데이터 (도시 목록, DART corp_code 매핑)
 ├─ router/      # 라우터 설정
 ├─ stores/      # Pinia 스토어
 └─ views/       # 라우트 단위 페이지 컴포넌트
@@ -107,8 +107,4 @@ src/
   - "지도" / "카드" 두 가지 보기 탭 추가 (지도: `KoreaMap`, 카드: 기존 `WeatherCard` 그리드)
   - "지역별 날씨 현황" 패널에 마우스가 있는 동안 Enter 키를 누르면 두 보기를 토글하는 단축키 구현 (`window` `keydown` 리스너 + hover 상태 조합)
   - 도시 선택/해제 상태를 하단 상태바에도 실시간 반영
-
-# Step7: Weather UI Library
-- (진행 예정) 별도 UI 컴포넌트 라이브러리는 아직 도입 전이며, 현재까지는 커스텀 컴포넌트와 순수 CSS로만 구현되어 있음
-
 

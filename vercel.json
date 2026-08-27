@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/dart-api/:path*",
+      "destination": "https://opendart.fss.or.kr/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

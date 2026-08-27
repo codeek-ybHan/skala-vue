@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 const API_KEY = import.meta.env.VITE_DART_API_KEY
-// DART가 CORS를 허용하지 않아 vite.config.js의 개발 서버 프록시(/dart-api)를 경유함
+// DART가 CORS를 허용하지 않아 프록시(/dart-api)를 경유함
+// - 개발: vite.config.js의 dev 서버 프록시
+// - 배포(Vercel): vercel.json의 rewrites (→ https://opendart.fss.or.kr/api)
 const BASE_URL = '/dart-api/fnlttSinglAcntAll.json'
 
 // 계정과목 표기는 기업마다 다르지만(매출액/영업수익 등), account_id(IFRS 표준 계정 ID)는 공통이라 이걸로 매칭
