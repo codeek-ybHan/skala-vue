@@ -14,9 +14,16 @@ export const useConfigStore = defineStore('config', () => {
     unit.value = unit.value === 'celsius' ? 'fahrenheit' : 'celsius'
   }
 
+  // 섭씨 값을 현재 단위(unit)에 맞게 변환
+  function convertTemp(celsius) {
+    if (unit.value === 'fahrenheit') return Math.round((celsius * 9) / 5 + 32)
+    return celsius
+  }
+
   return {
     unit,
     unitSymbol,
     toggleUnit,
+    convertTemp,
   }
 })

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useConfigStore } from '../stores/configStore'
-import { convertTemp } from '../utils/temperature'
 
 const HOT_THRESHOLD_C = 25
 const COLD_THRESHOLD_C = 10
@@ -28,10 +27,10 @@ function handleDetailClick() {
   emit('click-detail', props.weather.id)
 }
 
-const displayTemp = computed(() => convertTemp(props.weather.temp, configStore.unit))
-const displayFeelsLike = computed(() => convertTemp(props.weather.feelsLike, configStore.unit))
-const hotThreshold = computed(() => convertTemp(HOT_THRESHOLD_C, configStore.unit))
-const coldThreshold = computed(() => convertTemp(COLD_THRESHOLD_C, configStore.unit))
+const displayTemp = computed(() => configStore.convertTemp(props.weather.temp))
+const displayFeelsLike = computed(() => configStore.convertTemp(props.weather.feelsLike))
+const hotThreshold = computed(() => configStore.convertTemp(HOT_THRESHOLD_C))
+const coldThreshold = computed(() => configStore.convertTemp(COLD_THRESHOLD_C))
 const badgeType = computed(() => {
   if (displayTemp.value >= hotThreshold.value) return 'hot'
   if (displayTemp.value <= coldThreshold.value) return 'cold'

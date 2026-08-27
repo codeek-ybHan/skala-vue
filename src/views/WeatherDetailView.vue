@@ -4,7 +4,6 @@ import { useRoute, RouterLink } from 'vue-router'
 import { KOREA_CITIES } from '../data/koreaCities'
 import { fetchCityWeather } from '../api/weather'
 import { useConfigStore } from '../stores/configStore'
-import { convertTemp } from '../utils/temperature'
 
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 
@@ -28,11 +27,11 @@ onMounted(async () => {
 
 const displayTemp = computed(() => {
   if (!weather.value) return 0
-  return convertTemp(weather.value.temp, configStore.unit)
+  return configStore.convertTemp(weather.value.temp)
 })
 const displayFeelsLike = computed(() => {
   if (!weather.value) return 0
-  return convertTemp(weather.value.feelsLike, configStore.unit)
+  return configStore.convertTemp(weather.value.feelsLike)
 })
 </script>
 
