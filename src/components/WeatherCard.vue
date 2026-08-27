@@ -19,7 +19,7 @@ function hideTooltip() {
 }
 
 function handleDetailClick() {
-  emit('click-detail', props.weather.name, props.weather.status)
+  emit('click-detail', props.weather.id)
 }
 </script>
 

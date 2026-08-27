@@ -1,21 +1,20 @@
 <script setup>
 import { ref, computed, watch, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import SearchBar from '../components/SearchBar.vue'
 import WeatherCard from '../components/WeatherCard.vue'
+import { weatherList as initialWeatherList } from '../data/weatherData'
 
-const weatherList = ref([
-  { id: 'city_01', name: '서울', temp: 28, status: '맑음', mood: '산책하기 좋은 날', wind: '3m/s', feelsLike: 30 },
-  { id: 'city_02', name: '수원', temp: 24, status: '비', mood: '집콕하기 좋은 날', wind: '5m/s', feelsLike: 23 },
-  { id: 'city_03', name: '부산', temp: 26, status: '구름', mood: '느긋하게 보내기 좋은 날', wind: '4m/s', feelsLike: 27 },
-])
+const router = useRouter()
+const weatherList = ref(initialWeatherList)
 
 const searchQuery = ref('')
 const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
 const selectedCityInfo = ref('')
 
-const handleClickDetail = (cityName, status) => {
-  window.alert(`${cityName}의 현재 날씨는 ${status}입니다.`)
+const handleClickDetail = (cityId) => {
+  router.push(`/weather/${cityId}`)
 }
 const handleSelectCard = (name) => {
   selectedCityInfo.value = name
