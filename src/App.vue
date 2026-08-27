@@ -6,6 +6,7 @@ import UnitToggler from './components/UnitToggler.vue'
 <template>
   <nav class="tab-nav">
     <RouterLink to="/" class="tab-link">대시보드</RouterLink>
+    <RouterLink to="/company" class="tab-link">기업 날씨</RouterLink>
     <RouterLink to="/about" class="tab-link">서비스 소개</RouterLink>
     <UnitToggler />
   </nav>
