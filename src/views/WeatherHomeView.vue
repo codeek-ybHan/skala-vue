@@ -1,17 +1,75 @@
 <script setup>
-import { ref, computed, watch, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, watch, watchEffect, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
+
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import SearchBar from '../components/SearchBar.vue'
 import WeatherCard from '../components/WeatherCard.vue'
-import { weatherList as initialWeatherList } from '../data/weatherData'
 
+const route = useRoute()
 const router = useRouter()
-const weatherList = ref(initialWeatherList)
 
+const weatherList = ref([])
 const searchQuery = ref('')
 const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
 const selectedCityInfo = ref('')
+const isLoading = ref(false)
+
+const API_KEY = '87b2b433e08ddd7f1fe32bb6a7cbf2de'
+const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
+
+const mapCityResponse = (id, name, res) => ({
+  id,
+  name,
+  temp: Math.round(res.data.main.temp),
+  feelsLike: Math.round(res.data.main.feels_like),
+  status: res.data.weather[0].description,
+  mood: res.data.weather[0].description,
+  wind: `${res.data.wind.speed}m/s`,
+})
+
+const fetchRealTimeWeather = async () => {
+  isLoading.value = true
+  try {
+    const [seoulRes, suwonRes, busanRes] = await Promise.all([
+      axios.get(`${BASE_URL}?q=Seoul&appid=${API_KEY}&units=metric&lang=kr`),
+      axios.get(`${BASE_URL}?q=Suwon&appid=${API_KEY}&units=metric&lang=kr`),
+      axios.get(`${BASE_URL}?q=Busan&appid=${API_KEY}&units=metric&lang=kr`),
+    ])
+
+    weatherList.value = [
+      mapCityResponse('city_01', '서울', seoulRes),
+      mapCityResponse('city_02', '수원', suwonRes),
+      mapCityResponse('city_03', '부산', busanRes),
+    ]
+    console.log('🟢 [API 통신 완료] 메인 대시보드 실시간 기상 장부 동기화:', weatherList.value)
+  } catch (error) {
+    console.error('🔴 날씨 API 연동 실패:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  if (route.query.search) {
+    searchQuery.value = route.query.search
+  }
+  fetchRealTimeWeather()
+})
+
+watch(searchQuery, (newQuery) => {
+  router.push({
+    path: route.path,
+    query: { search: newQuery || undefined },
+  })
+})
+
+const filteredWeatherList = computed(() => {
+  const query = searchQuery.value.trim()
+  if (!query) return weatherList.value
+  return weatherList.value.filter((item) => item.name.includes(query))
+})
 
 const handleClickDetail = (cityId) => {
   router.push(`/weather/${cityId}`)
@@ -29,10 +87,6 @@ watch(selectedCityInfo, (newName) => {
 watchEffect(() => {
   console.log('[watchEffect 자동 호출] 현재 검색어: ', searchQuery.value)
 })
-
-const filteredWeatherList = computed(() =>
-  weatherList.value.filter((weather) => weather.name.includes(searchQuery.value.trim()))
-)
 </script>
 
 <template>
