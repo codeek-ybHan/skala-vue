@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_KEY = '9aadcb6ef9c84d9ef1ad0cbc76244a308b2db0f0'
+const API_KEY = import.meta.env.VITE_DART_API_KEY
 // DART가 CORS를 허용하지 않아 vite.config.js의 개발 서버 프록시(/dart-api)를 경유함
 const BASE_URL = '/dart-api/fnlttSinglAcntAll.json'
 
