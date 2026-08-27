@@ -1,17 +1,29 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import BaseDashboardCard from '../components/BaseDashboardCard.vue'
-import { weatherList } from '../data/weatherData'
+import { KOREA_CITIES } from '../data/koreaCities'
+import { fetchCityWeather } from '../api/weather'
 import { useConfigStore } from '../stores/configStore'
 import { convertTemp } from '../utils/temperature'
+
+import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 
 const configStore = useConfigStore()
 const route = useRoute()
 const weather = ref(null)
 
-onMounted(() => {
-  weather.value = weatherList.find((city) => city.id === route.params.cityId)
+onMounted(async () => {
+  const cityMeta = KOREA_CITIES.find((city) => city.id === route.params.cityId)
+  if (!cityMeta) {
+    weather.value = null
+    return
+  }
+  try {
+    weather.value = await fetchCityWeather(cityMeta)
+  } catch (error) {
+    console.error('🔴 상세 날씨 API 연동 실패:', error)
+    weather.value = null
+  }
 })
 
 const displayTemp = computed(() => {

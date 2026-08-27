@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, watch, watchEffect, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import { KOREA_CITIES } from '../data/koreaCities'
+import { fetchCityWeather } from '../api/weather'
 
 import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import SearchBar from '../components/SearchBar.vue'
@@ -16,33 +17,10 @@ const statusMessage = ref('카드를 클릭하거나 검색해 보세요')
 const selectedCityInfo = ref('')
 const isLoading = ref(false)
 
-const API_KEY = '87b2b433e08ddd7f1fe32bb6a7cbf2de'
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
-
-const mapCityResponse = (id, name, res) => ({
-  id,
-  name,
-  temp: Math.round(res.data.main.temp),
-  feelsLike: Math.round(res.data.main.feels_like),
-  status: res.data.weather[0].description,
-  mood: res.data.weather[0].description,
-  wind: `${res.data.wind.speed}m/s`,
-})
-
 const fetchRealTimeWeather = async () => {
   isLoading.value = true
   try {
-    const [seoulRes, suwonRes, busanRes] = await Promise.all([
-      axios.get(`${BASE_URL}?q=Seoul&appid=${API_KEY}&units=metric&lang=kr`),
-      axios.get(`${BASE_URL}?q=Suwon&appid=${API_KEY}&units=metric&lang=kr`),
-      axios.get(`${BASE_URL}?q=Busan&appid=${API_KEY}&units=metric&lang=kr`),
-    ])
-
-    weatherList.value = [
-      mapCityResponse('city_01', '서울', seoulRes),
-      mapCityResponse('city_02', '수원', suwonRes),
-      mapCityResponse('city_03', '부산', busanRes),
-    ]
+    weatherList.value = await Promise.all(KOREA_CITIES.map(fetchCityWeather))
     console.log('🟢 [API 통신 완료] 메인 대시보드 실시간 기상 장부 동기화:', weatherList.value)
   } catch (error) {
     console.error('🔴 날씨 API 연동 실패:', error)
