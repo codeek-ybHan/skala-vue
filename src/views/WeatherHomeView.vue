@@ -86,7 +86,7 @@ watchEffect(() => {
 
 <template>
   <div class="weather">
-    <h1>🌤️ SKALA 날씨 대시보드</h1>
+    <h1>🌤️ DART Weather</h1>
 
     <BaseDashboardCard>
       <template #header><span class="icon">🔍</span> 도시 검색</template>

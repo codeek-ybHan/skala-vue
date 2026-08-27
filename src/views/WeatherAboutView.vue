@@ -4,19 +4,23 @@ import BaseDashboardCard from '../components/BaseDashboardCard.vue' // 섹션 �
 const features = [
   { icon: '🔍', title: '도시 검색', desc: '원하는 도시를 검색해 실시간 날씨를 빠르게 확인할 수 있어요.' },
   { icon: '🏙️', title: '지역별 현황', desc: '주요 도시의 기온, 날씨 상태, 체감 온도를 한눈에 비교해 보세요.' },
+  { icon: '🗺️', title: '지도 / 카드 보기', desc: '지도 위 도시 마커나 카드 그리드 중 원하는 방식으로 날씨를 살펴보세요.' },
+  { icon: '🌡️', title: '단위 전환', desc: '섭씨 ↔ 화씨를 전환하면 기온과 체감 온도가 함께 환산돼요.' },
+  { icon: '📊', title: '기업 재무 날씨', desc: 'OpenDART 재무제표의 전기 대비 증감을 맑음·구름·비·폭풍으로 표현해요.' },
   { icon: '💬', title: '상태 메시지', desc: '선택한 도시에 맞춰 오늘의 분위기를 안내해 드려요.' },
 ]
 </script>
 
 <template>
   <div class="about">
-    <h1>☁️ SKALA 날씨 대시보드 소개</h1>
+    <h1>☁️ DART Weather 소개</h1>
 
     <BaseDashboardCard>
       <template #header><span class="icon">📖</span> 서비스 소개</template>
       <p class="lead">
-        SKALA 날씨 대시보드는 여러 도시의 날씨를 한 화면에서 빠르게 확인할 수 있는 서비스입니다.
+        DART Weather는 여러 도시의 날씨를 한 화면에서 빠르게 확인할 수 있는 서비스입니다.
         검색으로 원하는 도시를 찾고, 카드 형태로 정리된 정보를 통해 오늘의 날씨를 한눈에 파악해 보세요.
+        더불어 OpenDART 공시 재무정보를 활용해 기업의 최근 실적 흐름을 날씨로 바꿔 보여 주는 기능도 함께 제공합니다.
       </p>
     </BaseDashboardCard>
 
