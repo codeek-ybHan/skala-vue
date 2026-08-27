@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const API_KEY = import.meta.env.VITE_DART_API_KEY
-// DART가 CORS를 허용하지 않아 프록시(/dart-api)를 경유함
+// DART는 CORS를 허용하지 않고 API 키도 노출하면 안 되므로, 서버 프록시를 경유한다.
+// crtfc_key는 프록시 쪽(process.env.DART_API_KEY)에서 붙는다.
 // - 개발: vite.config.js의 dev 서버 프록시
-// - 배포(Vercel): vercel.json의 rewrites (→ https://opendart.fss.or.kr/api)
-const BASE_URL = '/dart-api/fnlttSinglAcntAll.json'
+// - 배포(Vercel): api/dart.js 서버리스 함수
+const BASE_URL = '/api/dart'
 
 // 계정과목 표기는 기업마다 다르지만(매출액/영업수익 등), account_id(IFRS 표준 계정 ID)는 공통이라 이걸로 매칭
 const ACCOUNT_ID = {
@@ -44,7 +44,6 @@ export async function fetchCompanyFinance({ name, corpCode }) {
 
   const res = await axios.get(BASE_URL, {
     params: {
-      crtfc_key: API_KEY,
       corp_code: corpCode,
       bsns_year: bsnsYear,
       reprt_code: '11011', // 사업보고서(연간)
